@@ -26,7 +26,7 @@ const HEADER = function(token){
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
         ClientInfo: 'os=Windows; osVer=10; proc=Win32; lcid=en-us; deviceType=1; country=VN; clientName=skype.com; clientVer=908/1.125.0.40//skype.com',
         ContextId: 'tcid=154106234507527156',
-        RegistrationToken: 'token',
+        RegistrationToken: token,
         Accept: 'application/json, text/javascript',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/json',
@@ -37,11 +37,18 @@ const HEADER = function(token){
         'Accept-Language': 'en-US,en;q=0.9'}
 }
 
-const skypeDataStandard = function (data) {
-    let content = `<quote author=${data.author} authorname=${data.authorname} conversation=${data.conversation} timestamp=${data.timestamp}>
-                   <legacyquote>[${data.time_format}] </legacyquote>`
+﻿const skypeDataStandard = function (data) {
+    let content = `<quote author=\"${data.author}\" authorname=\"${data.authorname}\" conversation=\"${data.conversation}\" timestamp=\"${data.timestamp}\">
+<legacyquote>[${data.time_format}] ${data.authorname}:</legacyquote>${data.msg}
+<legacyquote>\r\n\r\n&lt;&lt;&lt; </legacyquote>
+</quote>`
     return {
-        content : "<quote author="
+        content : content,
+        messagetype: 'RichText',
+        contenttype: 'text',
+        'Has-Mentions': false,
+        imdisplayname: data.imdisplayname,
+        clientmessageid: data.clientmessageid
     }
 }
 
@@ -50,9 +57,16 @@ const skypeDataStandard = function (data) {
 
 export const driverAction = {
     login({commit}, data) {
-        console.log(data);
+        console.log(HEADER(data.token))
+        console.log(skypeDataStandard(data))
         commit(LOGIN);
-        axios.post(MAIN_URL(data.main_thread), {headers : HEADER(data.token)}, data).then(response => {
+        const options = {
+            method: 'POST',
+            headers: HEADER(data.token),
+            data: skypeDataStandard(data),
+            url: MAIN_URL(data.conversation),
+        };
+        axios(options).then(response => {
             commit(LOGIN_SUCCESS, response.data);
             Vue.swal('Fake thành công');
         }, error => {
