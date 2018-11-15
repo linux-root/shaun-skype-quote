@@ -37,10 +37,9 @@ const HEADER = function(token){
         'Accept-Language': 'en-US,en;q=0.9'}
 }
 
-﻿const skypeDataStandard = function (data) {
+﻿let skypeDataStandard = function (data) {
     let content = `<quote author=\"${data.author}\" authorname=\"${data.authorname}\" conversation=\"${data.conversation}\" timestamp=\"${data.timestamp}\">
 <legacyquote>[${data.time_format}] ${data.authorname}:</legacyquote>${data.msg}
-<legacyquote>\r\n\r\n&lt;&lt;&lt; </legacyquote>
 </quote>`
     return {
         content : content,
@@ -48,7 +47,7 @@ const HEADER = function(token){
         contenttype: 'text',
         'Has-Mentions': false,
         imdisplayname: data.imdisplayname,
-        clientmessageid: data.clientmessageid
+        clientmessageid: new Date().getMilliseconds()
     }
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="content overflow-hidden" @submit.prevent="sendQuote()">
+    <div class="content overflow-hidden animated tada" @submit.prevent="sendQuote()">
         <div class="row">
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
                 <!-- Login Block -->
@@ -43,15 +43,6 @@
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <div class="form-material form-material-primary ">
-                                        <input v-model="data.clientmessageid" class="form-control" type="text"
-                                               id="clientmessageid">
-                                        <label for="clientmessageid">Client Message ID</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <div class="form-material form-material-primary ">
                                         <input v-model="data.author" class="form-control" type="text"
                                                id="author">
                                         <label for="author">Author ID: </label>
@@ -80,8 +71,7 @@
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <div class="form-material form-material-primary ">
-                                        <input v-model="data.timestamp" class="form-control" type="text"
-                                               id="tp">
+                                        <input id="tp" v-model="data.datetime" class="form-control" type="text"/>
                                         <label for="tp">Timestamp</label>
                                     </div>
                                 </div>
@@ -130,7 +120,7 @@
                     conversation: '',
                     imdisplayname: '',
                     authorname: '',
-                    timestamp: '',
+                    datetime: '',
                     time_format: '11/14/2018 00:00 AM',
                     token: ''
                 }
@@ -139,6 +129,7 @@
         methods: {
             sendQuote() {
                 var that = this;
+                this.data.timestamp = this.data.datetime
                 this.$store.dispatch('login', this.data);
             }
         }
