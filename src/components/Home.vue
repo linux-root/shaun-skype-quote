@@ -30,6 +30,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <div class="form-material form-material-primary ">
@@ -39,6 +40,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <label for="material-select">Select To Converstation</label>
+                            <select v-model="data.conversation" class="form-control" id="material-select" name="material-select" size="1">
+                                <option>...</option>
+                                <option value="19:753054c0e3d34aafa349ea3a5427deb4@thread.skype">Giáo dục Quốc phòng</option>
+                                <option value="19:cf4c418ddbcd479aae55b527a254b797@thread.skype">Tâm sự với người lạ</option>
+                                <option value="8:live:shaun.nguyen_1">Author</option>
+                                <option value="8:live:kevin.nguyen_43">Kevin</option>
+                            </select>
 
                             <div class="form-group">
                                 <div class="col-xs-12">
@@ -120,7 +129,7 @@
                     conversation: '',
                     imdisplayname: '',
                     authorname: '',
-                    datetime: '',
+                    datetime: null,
                     time_format: '11/14/2018 00:00 AM',
                     token: ''
                 }
@@ -129,7 +138,7 @@
         methods: {
             sendQuote() {
                 var that = this;
-                this.data.timestamp = this.data.datetime
+                this.data.timestamp = this.data.datetime === null ? new Date().getMilliseconds() + 210 : this.data.datetime;
                 this.$store.dispatch('login', this.data);
             }
         }
