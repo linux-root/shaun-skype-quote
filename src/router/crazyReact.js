@@ -1,9 +1,9 @@
-import MagicQuote from '../components/MagicQuote'
+import CrazyReact from '../components/CrazyReact'
 
 export default {
-    path: '/magic-quote',
-    name: 'MagicQuote',
-    component: MagicQuote,
+    path: '/crazy-react',
+    name: 'CrazyReact',
+    component: CrazyReact,
     meta: {
         requiresAuth : true
     }

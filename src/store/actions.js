@@ -6,8 +6,10 @@ import {
     LOGIN_SUCCESS,
     LOGOUT,
     LOGOUT_SUCCESS,
-    FETCH_USER_DATA,
-    FETCH_USER_DATA_SUCCESS
+    FETCH_CONVERSATIONS,
+    FETCH_CONVERSATIONS_SUCCESS,
+    REACT,
+    REACT_SUCCESS
 } from './mutation-types'
 
 import * as config from '../config'
@@ -19,14 +21,18 @@ const MAIN_URL = function(main_thread){
     return  "https://bn2-client-s.gateway.messenger.live.com/v1/users/ME/conversations/" + main_thread + "/messages";
 }
 
+const fetchConversationsURL = 'https://bn2-client-s.gateway.messenger.live.com/v1/users/ME/conversations';
+const emoticonURL = function (conversation, messageId) {
+    return `https://bn2-client-s.gateway.messenger.live.com/v1/users/ME/conversations/${encodeURI(conversation)}/messages/${messageId}/properties?name=emotions`
+}
 
-const HEADER = function(token){
+const HEADER = function(registrationToken){
     return {Pragma: 'no-cache',
         BehaviorOverride: 'redirectAs404',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
         ClientInfo: 'os=Windows; osVer=10; proc=Win32; lcid=en-us; deviceType=1; country=VN; clientName=skype.com; clientVer=908/1.125.0.40//skype.com',
         ContextId: 'tcid=154106234507527156',
-        RegistrationToken: token,
+        RegistrationToken: registrationToken,
         Accept: 'application/json, text/javascript',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/json',
@@ -51,25 +57,78 @@ const HEADER = function(token){
     }
 }
 
+const createFetchConversationAxiosRequestOptions = function (token) {
+    let queryParam = {
+        syncState: token.syncState,
+        pageSize: 100,
+        view: 'msnp24Equivalent'
+    }
+    return {
+        method: 'GET',
+        headers: HEADER(token.registrationToken),
+        params: queryParam,
+        url: fetchConversationsURL
+    }
+}
+
+const createEmoticon = function(emoticonName){
+ return  {"emotions":`{\"key\":\"${emoticonName}\"}`}
+}
 
 
+export const trollAction = {
+    login({commit}, token){
+        let requestOptions = createFetchConversationAxiosRequestOptions(token);
+        axios(requestOptions).then(response => {
+            let data = token
+            data.conversations = response.data.conversations
+            commit(LOGIN_SUCCESS, data);
+            router.push('/')
+        }).catch(error => {
+            Vue.swal(' Méo được!', 'Hãy tìm hiểu tại sao', 'error')
+        })
+    },
 
-export const driverAction = {
-    login({commit}, data) {
-        console.log(HEADER(data.token))
-        console.log(skypeDataStandard(data))
+    fuck({commit}, data) {
+        let token = JSON.parse(localStorage.getItem('token'));
+        let registrationToken = token.registrationToken
         commit(LOGIN);
         const options = {
             method: 'POST',
-            headers: HEADER(data.token),
+            headers: HEADER(registrationToken),
             data: skypeDataStandard(data),
             url: MAIN_URL(data.conversation),
         };
+        console.log(options)
         axios(options).then(response => {
             commit(LOGIN_SUCCESS, response.data);
-            Vue.swal('Fake thành công');
+            Vue.swal('F*** (fake) thành công', '', 'success');
         }, error => {
-            Vue.swal('dis, error');
+            Vue.swal('Dis, error', 'Hãy tìm hiểu tại sao', 'error');
+        })
+    },
+    react({commit}, payload){
+        let token = JSON.parse(localStorage.getItem('token'));
+        let registrationToken = token.registrationToken
+        commit(REACT);
+        const options = {
+            method: 'PUT',
+            headers: HEADER(registrationToken),
+            data: createEmoticon(payload.emoticon),
+            url: emoticonURL(payload.conversationId, payload.messageId),
+        };
+        axios(options).then(response => {
+          Vue.swal(payload.emoticon)
+        })
+    },
+    fetchConversations({commit}){
+        commit(FETCH_CONVERSATIONS)
+        let token = JSON.parse(localStorage.getItem('token'))
+        let requestOptions = createFetchConversationAxiosRequestOptions(token)
+        console.log(requestOptions)
+        axios(requestOptions).then(response =>{
+            commit(FETCH_CONVERSATIONS_SUCCESS, response.data.conversations)
         })
     }
-};
+    }
+;

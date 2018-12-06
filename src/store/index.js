@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {productGetters} from './getters'
-import {driverAction} from "./actions";
-import {driverMutation} from "./mutations"
+import {trollAction} from "./actions";
+import {trollMutaion} from "./mutations"
 
 Vue.use(Vuex); // config vuex plugin for vue
 
@@ -13,10 +13,10 @@ export default new Vuex.Store({
     state: {
         showLoader: false,
         user: {},
-        results: [],
-        accessToken : {}
+        conversations: [],
+        token : {}
     },
     getters : Object.assign({}, productGetters),
-    mutations: Object.assign({},driverMutation),
-    actions: Object.assign({}, driverAction)
+    mutations: Object.assign({},trollMutaion),
+    actions: Object.assign({}, trollAction)
 })

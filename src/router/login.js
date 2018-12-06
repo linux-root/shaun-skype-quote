@@ -1,10 +1,10 @@
-import Home from '../components/Home'
+import loginForm from '../components/loginForm'
 
 export default {
-    path: '/',
-    name: 'Home',
-    component: Home,
+    path: '/login',
+    name: 'Login',
+    component: loginForm,
     meta: {
-        requiresAuth : true
+        requiresAuth : false
     }
 }

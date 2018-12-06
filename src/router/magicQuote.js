@@ -1,9 +1,9 @@
-import Home from '../components/Home'
+import MagicQuote from '../components/MagicQuote'
 
 export default {
-    path: '/',
-    name: 'Home',
-    component: Home,
+    path: '/magic-quote',
+    name: 'MagicQuote',
+    component: MagicQuote,
     meta: {
         requiresAuth : true
     }

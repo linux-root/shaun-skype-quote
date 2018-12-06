@@ -1,5 +1,6 @@
 import {
-    FETCH_USER_DATA_SUCCESS,
+    FETCH_CONVERSATIONS_SUCCESS,
+    FETCH_CONVERSATIONS,
     LOGIN,
     LOGIN_SUCCESS,
     LOGOUT,
@@ -7,18 +8,25 @@ import {
 } from './mutation-types'
 
 
-export const driverMutation = {
+export const trollMutaion = {
     [LOGIN](state){
         state.showLoader = true;
     },
     [LOGIN_SUCCESS](state, payload){
+        console.log(payload)
         state.showLoader = true;
-        state.accessToken = payload;
-        localStorage.setItem('accessToken', JSON.stringify(payload))
+        state.conversations = payload.conversations
+        let token = {
+            registrationToken : payload.registrationToken,
+            syncState : payload.syncState
+        }
+        localStorage.setItem('token', JSON.stringify(token))
     },
-    [FETCH_USER_DATA_SUCCESS](state, payload){
+    [FETCH_CONVERSATIONS](state){
+        state.showLoader = true;
+    },
+    [FETCH_CONVERSATIONS_SUCCESS](state, conversations){
         state.showLoader = false;
-        state.user = payload;
-        localStorage.setItem('user',JSON.stringify(payload));
+        state.conversations = conversations;
     }
 };

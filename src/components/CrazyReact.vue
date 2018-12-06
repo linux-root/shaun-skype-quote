@@ -1,5 +1,5 @@
 <template>
-    <div class="content overflow-hidden animated tada" @submit.prevent="sendQuote()">
+    <div class="content overflow-hidden animated tada" @submit.prevent="react()">
         <div class="pull-left">
             <router-link style="cursor: pointer" to="/"><i class="si si-arrow-left text-primary fa-4x"></i> </router-link>
         </div>
@@ -14,11 +14,11 @@
 
                 <div class="block block-themed animated fadeIn">
                     <div class="block-header bg-primary">
-                        <h3 class="block-title">Shaun Magic Quote</h3>
+                        <h3 class="block-title">Shaun Crazy React</h3>
                     </div>
                     <div class="block-content block-content-full block-content-narrow">
                         <!-- Login Title -->
-                        <h1 class="h2 font-w600 push-30-t push-5">Shaun Skype Quote</h1>
+                        <h1 class="h2 font-w600 push-30-t push-5">Crazy React</h1>
                         <!-- END Login Title -->
 
                         <!-- Login Form -->
@@ -28,66 +28,21 @@
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <div class="form-material form-material-primary">
-                                        <input v-model="data.msg" class="form-control" type="text" id="message">
-                                        <label for="message">Message</label>
+                                        <input v-model="data.emoticons" class="form-control" type="text" id="message">
+                                        <label for="message">React</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <div class="form-material form-material-primary ">
-                                        <input v-model="data.conversation" class="form-control" type="text"
-                                               id="stc">
-                                        <label for="stc">Send To Converstation</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <label for="material-select">Select To Converstation</label>
+                            <label for="material-select">the Last message Converstation</label>
                             <select v-model="data.conversation" class="form-control" id="material-select" name="material-select" size="1">
                                 <option>...</option>
-                                <option v-for="conv in conversations"  :value="conv.id">{{getConversationName(conv)}}</option>
+                                <option v-for="conv in conversations"  :value="conv">{{getConversationName(conv)}}</option>
                             </select>
 
                             <div class="form-group">
-                                <div class="col-xs-12">
-                                    <div class="form-material form-material-primary ">
-                                        <input v-model="data.author" class="form-control" type="text"
-                                               id="author">
-                                        <label for="author">Author ID: </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <div class="form-material form-material-primary ">
-                                        <input v-model="data.authorname" class="form-control" type="text"
-                                               id="authorname">
-                                        <label for="authorname">Author Name</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <div class="form-material form-material-primary ">
-                                        <input v-model="data.imdisplayname" class="form-control" type="text"
-                                               id="imdpn">
-                                        <label for="imdpn">IMDISPLAYNAME(Bullshit field)</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <div class="form-material form-material-primary ">
-                                        <input id="tp" v-model="data.datetime" class="form-control" type="text"/>
-                                        <label for="tp">Timestamp</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <div class="col-xs-12 col-sm-6 col-md-4">
-                                    <button class="btn btn-primary push-10-r"  type="submit">Fuck</button>
+                                    <button class="btn btn-primary push-10-r"  type="submit">React</button>
                                 </div>
                             </div>
                         </form>
@@ -106,13 +61,8 @@
         data() {
             return {
                 data: {
-                    msg: '',
-                    author: '',
-                    conversation: '',
-                    imdisplayname: '',
-                    authorname: '',
-                    datetime: null,
-                    time_format: '11/14/2018 00:00 AM',
+                    emoticons : '',
+                    conversation: {}
                 }
             }
         },
@@ -125,9 +75,19 @@
             }
         },
         methods: {
-            sendQuote() {
-                this.data.timestamp = this.data.datetime === null ? new Date().getMilliseconds() + 210 : this.data.datetime;
-                this.$store.dispatch('fuck', this.data);
+            react() {
+                let emoticonList = this.data.emoticons.split(',')
+                console.log(this.data.conversation)
+                let conversationId = this.data.conversation.id
+                let messageId = this.data.conversation.lastMessage.id
+                emoticonList.forEach(e => {
+                    let payload  = {
+                        conversationId : conversationId,
+                        messageId : messageId,
+                        emoticon : e
+                    }
+                    this.$store.dispatch('react', payload);
+                })
             },
             getConversationName(conversation){
                 if(conversation.threadProperties != null){

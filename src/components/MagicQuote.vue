@@ -1,17 +1,20 @@
 <template>
     <div class="content overflow-hidden animated tada" @submit.prevent="sendQuote()">
+        <div class="pull-left">
+            <router-link style="cursor: pointer" to="/"><i class="si si-arrow-left text-primary fa-4x"></i> </router-link>
+        </div>
+
+        <div v-if="loggedIn" class="content pull-right">
+            <div data-toggle="popover" title="" data-placement="left" data-content=" Tàu lượn"  style="cursor: pointer"  @click="logout"><i class="fa fa-paper-plane-o text-city fa-4x"></i> </div>
+        </div>
+
         <div class="row">
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
                 <!-- Login Block -->
+
                 <div class="block block-themed animated fadeIn">
                     <div class="block-header bg-primary">
-                        <ul class="block-options">
-                            <li>
-                                <a href="base_pages_register.html" data-toggle="tooltip" data-placement="left" title=""
-                                   data-original-title="Đăng Ký"><i class="si si-plus"></i></a>
-                            </li>
-                        </ul>
-                        <h3 class="block-title">Shaun</h3>
+                        <h3 class="block-title">Shaun Magic Quote</h3>
                     </div>
                     <div class="block-content block-content-full block-content-narrow">
                         <!-- Login Title -->
@@ -43,10 +46,7 @@
                             <label for="material-select">Select To Converstation</label>
                             <select v-model="data.conversation" class="form-control" id="material-select" name="material-select" size="1">
                                 <option>...</option>
-                                <option value="19:753054c0e3d34aafa349ea3a5427deb4@thread.skype">Giáo dục Quốc phòng</option>
-                                <option value="19:cf4c418ddbcd479aae55b527a254b797@thread.skype">Tâm sự với người lạ</option>
-                                <option value="8:live:shaun.nguyen_1">Author</option>
-                                <option value="8:live:kevin.nguyen_43">Kevin</option>
+                                <option v-for="conv in conversations"  :value="conv.id">{{getConversationName(conv)}}</option>
                             </select>
 
                             <div class="form-group">
@@ -86,23 +86,6 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-xs-12">
-                                    <div class="form-material form-material-primary ">
-                                        <input v-model="data.token" class="form-control" type="text"
-                                               id="tk">
-                                        <label for="tk">Token</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <label class="css-input switch switch-sm switch-primary">
-                                        <input type="checkbox" id="login-remember-me"
-                                               name="login-remember-me"><span></span> I am hacker?
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                     <button class="btn btn-primary push-10-r"  type="submit">Fuck</button>
                                 </div>
@@ -119,28 +102,47 @@
 
 <script>
     export default {
-        name: "Home",
+        name: "MagicQuote",
         data() {
             return {
                 data: {
                     msg: '',
-                    clientmessageid: '',
                     author: '',
                     conversation: '',
                     imdisplayname: '',
                     authorname: '',
                     datetime: null,
                     time_format: '11/14/2018 00:00 AM',
-                    token: ''
                 }
+            }
+        },
+        computed: {
+            conversations : function () {
+                return this.$store.state.conversations
+            },
+            loggedIn(){
+                return localStorage.getItem('token') != undefined
             }
         },
         methods: {
             sendQuote() {
-                var that = this;
                 this.data.timestamp = this.data.datetime === null ? new Date().getMilliseconds() + 210 : this.data.datetime;
-                this.$store.dispatch('login', this.data);
+                this.$store.dispatch('fuck', this.data);
+            },
+            getConversationName(conversation){
+                if(conversation.threadProperties != null){
+                    return conversation.threadProperties.topic
+                } else {
+                    return conversation.id
+                }
+            },
+            logout(){
+                    localStorage.removeItem('token');
+                    this.$router.push('/login');
             }
+        },
+        created : function () {
+            this.$store.dispatch('fetchConversations');
         }
     }
 </script>
