@@ -34,15 +34,26 @@
                                 </div>
                             </div>
 
-                            <label for="material-select">the Last message Converstation</label>
-                            <select v-model="data.conversation" class="form-control" id="material-select" name="material-select" size="1">
+                            <label for="material-select">Conversation</label>
+                            <select v-model="data.conversation" @change="updateMessages()" class="form-control" id="material-select" name="material-select" size="1">
                                 <option>...</option>
                                 <option v-for="conv in conversations"  :value="conv">{{getConversationName(conv)}}</option>
                             </select>
+                            <label for="message-select">Message</label>
+                            <select v-model="data.message" class="form-control" id="message-select" name="message-select" size="5">
+                                <option v-for="message in data.messages"  :value="message">{{message.content}}</option>
+                            </select>
 
+                            <br/>
                             <div class="form-group">
                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                     <button class="btn btn-primary push-10-r"  type="submit">React</button>
+                                </div>
+                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <button class="btn btn-danger push-10-r" @click="remove()" type="button">Remove</button>
+                                </div>
+                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <button class="btn btn-success push-10-r" @click="rush()" type="button">Rush</button>
                                 </div>
                             </div>
                         </form>
@@ -56,13 +67,17 @@
 </template>
 
 <script>
+    import axios from 'axios'
+    import {HEADER_WITH_SAVED_TOKEN} from '../store/actions'
     export default {
         name: "MagicQuote",
         data() {
             return {
                 data: {
                     emoticons : '',
-                    conversation: {}
+                    conversation: {},
+                    message: {},
+                    messages : []
                 }
             }
         },
@@ -79,7 +94,7 @@
                 let emoticonList = this.data.emoticons.split(',')
                 console.log(this.data.conversation)
                 let conversationId = this.data.conversation.id
-                let messageId = this.data.conversation.lastMessage.id
+                let messageId = this.data.message.id
                 emoticonList.forEach(e => {
                     let payload  = {
                         conversationId : conversationId,
@@ -95,6 +110,38 @@
                 } else {
                     return conversation.id
                 }
+            },
+            remove(){
+                let emoticonList = this.data.emoticons.split(',')
+                console.log(this.data.conversation)
+                let conversationId = this.data.conversation.id
+                let messageId = this.data.message.id
+                emoticonList.forEach(e => {
+                    let payload  = {
+                        conversationId : conversationId,
+                        messageId : messageId,
+                        emoticon : e
+                    }
+                    this.$store.dispatch('removeReact', payload);
+                })
+            },
+            updateMessages(){
+                const baseURL = 'https://bn2-client-s.gateway.messenger.live.com/v1/users/ME/conversations'
+                const conversationId = this.data.conversation.id
+                const messageURL = `${baseURL}/${conversationId}/messages?startTime=1&pageSize=20&view=msnp24Equivalent`
+                const requestOption = {
+                method: 'GET',
+                    headers: HEADER_WITH_SAVED_TOKEN(),
+                    url: messageURL
+                }
+                let that = this
+                axios(requestOption).then(response => {
+                    that.data.messages = response.data.messages
+                })
+            },
+            rush(){
+                this.react()
+                this.remove()
             },
             logout(){
                     localStorage.removeItem('token');

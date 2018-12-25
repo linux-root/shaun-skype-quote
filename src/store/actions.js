@@ -26,7 +26,14 @@ const emoticonURL = function (conversation, messageId) {
     return `https://bn2-client-s.gateway.messenger.live.com/v1/users/ME/conversations/${encodeURI(conversation)}/messages/${messageId}/properties?name=emotions`
 }
 
-const HEADER = function(registrationToken){
+export function HEADER_WITH_SAVED_TOKEN(){
+    let token = JSON.parse(localStorage.getItem('token'));
+    let registrationToken = token.registrationToken
+    return HEADER(registrationToken)
+}
+
+
+ function HEADER(registrationToken){
     return {Pragma: 'no-cache',
         BehaviorOverride: 'redirectAs404',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
@@ -71,6 +78,21 @@ const createFetchConversationAxiosRequestOptions = function (token) {
     }
 }
 
+function sendReactRequest(method, payload){
+    let token = JSON.parse(localStorage.getItem('token'));
+    let registrationToken = token.registrationToken
+    const options = {
+        method: method,
+        headers: HEADER(registrationToken),
+        data: createEmoticon(payload.emoticon),
+        url: emoticonURL(payload.conversationId, payload.messageId),
+    };
+    axios(options).then(response => {
+        let action = method === 'DELETE' ? 'removed ' : ''
+        Vue.swal(`${action}${payload.emoticon}`)
+    })
+}
+
 const createEmoticon = function(emoticonName){
  return  {"emotions":`{\"key\":\"${emoticonName}\"}`}
 }
@@ -108,19 +130,12 @@ export const trollAction = {
         })
     },
     react({commit}, payload){
-        let token = JSON.parse(localStorage.getItem('token'));
-        let registrationToken = token.registrationToken
-        commit(REACT);
-        const options = {
-            method: 'PUT',
-            headers: HEADER(registrationToken),
-            data: createEmoticon(payload.emoticon),
-            url: emoticonURL(payload.conversationId, payload.messageId),
-        };
-        axios(options).then(response => {
-          Vue.swal(payload.emoticon)
-        })
+      sendReactRequest('PUT', payload)
     },
+    removeReact({commit}, payload){
+        sendReactRequest('DELETE', payload)
+    }
+    ,
     fetchConversations({commit}){
         commit(FETCH_CONVERSATIONS)
         let token = JSON.parse(localStorage.getItem('token'))

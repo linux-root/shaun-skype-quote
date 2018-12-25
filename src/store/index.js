@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {productGetters} from './getters'
 import {trollAction} from "./actions";
 import {trollMutaion} from "./mutations"
 
@@ -16,7 +15,6 @@ export default new Vuex.Store({
         conversations: [],
         token : {}
     },
-    getters : Object.assign({}, productGetters),
     mutations: Object.assign({},trollMutaion),
     actions: Object.assign({}, trollAction)
 })
