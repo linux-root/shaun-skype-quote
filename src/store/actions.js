@@ -52,8 +52,7 @@ export function HEADER_WITH_SAVED_TOKEN(){
 
 ﻿let skypeDataStandard = function (data) {
     let content = `<quote author=\"${data.author}\" authorname=\"${data.authorname}\" conversation=\"${data.conversation}\" timestamp=\"${data.timestamp}\">
-<legacyquote>[${data.time_format}] ${data.authorname}:</legacyquote>${data.msg}
-</quote>`
+<legacyquote>[${data.time_format}] ${data.authorname}:</legacyquote>${data.msg}</quote>`
     return {
         content : content,
         messagetype: 'RichText',
