@@ -28,7 +28,6 @@ const emoticonURL = function (conversation, messageId) {
 
 export function HEADER_WITH_SAVED_TOKEN(){
     let token = JSON.parse(localStorage.getItem('token'));
-    let registrationToken = token.registrationToken
     return HEADER(registrationToken)
 }
 
@@ -51,8 +50,7 @@ export function HEADER_WITH_SAVED_TOKEN(){
 }
 
 ﻿let skypeDataStandard = function (data) {
-    let content = `<quote author=\"${data.author}\" authorname=\"${data.authorname}\" conversation=\"${data.conversation}\" timestamp=\"${data.timestamp}\">
-<legacyquote>[${data.time_format}] ${data.authorname}:</legacyquote>${data.msg}</quote>`
+    let content = `<quote author=\"${data.author}\" authorname=\"${data.authorname}\" conversation=\"${data.conversation}\" timestamp=\"${data.timestamp}\"><legacyquote>[${data.time_format}] ${data.authorname}:</legacyquote>${data.msg}</quote>`
     return {
         content : content,
         messagetype: 'RichText',
@@ -63,23 +61,23 @@ export function HEADER_WITH_SAVED_TOKEN(){
     }
 }
 
-const createFetchConversationAxiosRequestOptions = function (token) {
+const createFetchConversationAxiosRequestOptions = function (registrationToken) {
     let queryParam = {
-        syncState: token.syncState,
         pageSize: 100,
+        startTime: new Date().getMilliseconds(),
+        targetType: "Passport|Skype|Lync|Thread|PSTN",
         view: 'msnp24Equivalent'
     }
     return {
         method: 'GET',
-        headers: HEADER(token.registrationToken),
+        headers: HEADER(registrationToken),
         params: queryParam,
         url: fetchConversationsURL
     }
 }
 
 function sendReactRequest(method, payload){
-    let token = JSON.parse(localStorage.getItem('token'));
-    let registrationToken = token.registrationToken
+    let registrationToken = localStorage.getItem('token')
     const options = {
         method: method,
         headers: HEADER(registrationToken),
@@ -98,11 +96,13 @@ const createEmoticon = function(emoticonName){
 
 
 export const trollAction = {
-    login({commit}, token){
-        let requestOptions = createFetchConversationAxiosRequestOptions(token);
+    login({commit}, registrationToken){
+        console.log('login....xx')
+        let requestOptions = createFetchConversationAxiosRequestOptions(registrationToken);
         axios(requestOptions).then(response => {
-            let data = token
+            let data = registrationToken
             data.conversations = response.data.conversations
+            console.log(response)
             commit(LOGIN_SUCCESS, data);
             router.push('/')
         }).catch(error => {
@@ -111,8 +111,7 @@ export const trollAction = {
     },
 
     fuck({commit}, data) {
-        let token = JSON.parse(localStorage.getItem('token'));
-        let registrationToken = token.registrationToken
+        let registrationToken = localStorage.getItem('token');
         commit(LOGIN);
         const options = {
             method: 'POST',
@@ -137,7 +136,7 @@ export const trollAction = {
     ,
     fetchConversations({commit}){
         commit(FETCH_CONVERSATIONS)
-        let token = JSON.parse(localStorage.getItem('token'))
+        let token = localStorage.getItem('token')
         let requestOptions = createFetchConversationAxiosRequestOptions(token)
         console.log(requestOptions)
         axios(requestOptions).then(response =>{

@@ -16,11 +16,8 @@ export const trollMutaion = {
         console.log(payload)
         state.showLoader = true;
         state.conversations = payload.conversations
-        let token = {
-            registrationToken : payload.registrationToken,
-            syncState : payload.syncState
-        }
-        localStorage.setItem('token', JSON.stringify(token))
+        let registrationToken = payload.registrationToken
+        localStorage.setItem('token', registrationToken)
     },
     [FETCH_CONVERSATIONS](state){
         state.showLoader = true;

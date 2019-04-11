@@ -1,7 +1,6 @@
 <template>
   <div id="app" class="header-navbar-fixed">
     <router-view></router-view>
-
     <!-- Footer -->
     <footer id="page-footer" class="content-mini content-mini-full font-s12 bg-gray-lighter clearfix">
       <div class="text-center">

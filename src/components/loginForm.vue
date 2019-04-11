@@ -21,21 +21,11 @@
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <div class="form-material form-material-primary">
-                                        <input v-model="token.registrationToken" class="form-control" type="text" id="registration-token">
+                                        <input v-model="registrationToken" class="form-control" type="text" id="registration-token">
                                         <label for="registration-token">Registration Token</label>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <div class="form-material form-material-primary">
-                                        <input v-model="token.syncState" class="form-control" type="text" id="syncState">
-                                        <label for="syncState">syncState</label>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <label class="css-input switch switch-sm switch-primary">
@@ -64,7 +54,7 @@
         name: "loginForm",
         data() {
             return {
-                token: {},
+                registrationToken: null,
                 hacker: false
             }
         },
@@ -73,7 +63,7 @@
                 if(this.hacker){
                     this.$swal('fuck you Hacker')
                 } else {
-                    this.$store.dispatch('login', this.token);
+                    this.$store.dispatch('login', this.registrationToken);
                 }
             },
             howToLogin(){
