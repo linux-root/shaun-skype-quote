@@ -126,6 +126,7 @@
                 })
             },
             updateMessages(){
+                console.log('update message')
                 const baseURL = 'https://bn2-client-s.gateway.messenger.live.com/v1/users/ME/conversations'
                 const conversationId = this.data.conversation.id
                 const messageURL = `${baseURL}/${conversationId}/messages?startTime=1&pageSize=20&view=msnp24Equivalent`

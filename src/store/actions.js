@@ -27,7 +27,7 @@ const emoticonURL = function (conversation, messageId) {
 }
 
 export function HEADER_WITH_SAVED_TOKEN(){
-    let token = JSON.parse(localStorage.getItem('token'));
+    let registrationToken = localStorage.getItem('token');
     return HEADER(registrationToken)
 }
 
@@ -62,6 +62,7 @@ export function HEADER_WITH_SAVED_TOKEN(){
 }
 
 const createFetchConversationAxiosRequestOptions = function (registrationToken) {
+    console.log(new Date().getTime())
     let queryParam = {
         pageSize: 100,
         startTime: new Date().getMilliseconds(),
@@ -97,16 +98,15 @@ const createEmoticon = function(emoticonName){
 
 export const trollAction = {
     login({commit}, registrationToken){
-        console.log('login....xx')
         let requestOptions = createFetchConversationAxiosRequestOptions(registrationToken);
+        console.log(requestOptions)
         axios(requestOptions).then(response => {
-            let data = registrationToken
+            let data = {}
+            data.registrationToken = registrationToken
             data.conversations = response.data.conversations
-            console.log(response)
+            console.log(data)
             commit(LOGIN_SUCCESS, data);
             router.push('/')
-        }).catch(error => {
-            Vue.swal(' Méo được!', 'Hãy tìm hiểu tại sao', 'error')
         })
     },
 
